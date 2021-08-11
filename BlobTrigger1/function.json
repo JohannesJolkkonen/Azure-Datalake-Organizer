@@ -1,0 +1,12 @@
+{
+  "scriptFile": "__init__.py",
+  "bindings": [
+    {
+      "name": "myadl",
+      "type": "blobTrigger",
+      "direction": "in",
+      "path": "curated-02c1af03-6c54-4150-8381-fdb7bfc4cd5c/{name}",
+      "connection": "datalake01storage_STORAGE"
+    }
+  ]
+}
