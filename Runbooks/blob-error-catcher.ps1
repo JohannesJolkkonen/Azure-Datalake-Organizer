@@ -24,11 +24,12 @@ Connect-AzAccount -ServicePrincipal `
     -Tenant $conn.TenantId `
     -CertificateThumbprint $conn.CertificateThumbprint
 
+### Start the other runbook to move blob
 $job = Start-AzAutomationRunbook -ResourceGroupName $resgroup `
   -AutomationAccountName $automacc -Name $runbookname -Parameters @{"RunbookInput"=$Body}
 
 if (!$job) {
-    Write-Output "Failed to start Blob-control runbook."
+    Write-Output "Failed to start Blob-control runbook. Check permissions."
     exit
     }else {
         Write-Output "Job started successfully"
@@ -43,19 +44,26 @@ While ($doLoop) {
     $doLoop = (($status -ne "Completed")) -and ($status -ne "Failed") -and ($status -ne "Suspended") -and ($status -ne "Stopped")
 }
 
+### Catch Errors from Runbook JobOutput
 $joboutput = (Get-AzAutomationJobOutput -ResourceGroupName $resgroup `
     -AutomationAccountName $automacc `
     -Id $job.JobId `
     -Stream Error).Summary
 
-$teamsWebhook = Get-AutomationVariable -Name "teams-incoming-webhook"
-$body = [PSCustomObject][Ordered]@{
-    "summmary"="Alert from Datalake Organizer"
-    "title"="Alert from Datalake Organizer"
-    "text"="<pre>Errors from runbook: $joboutput<br><br>Request body: $body</pre>"}
+### If Errors were encountered, a message is sent to a Teams-webhook.
+if (!$joboutput) {
+    $teamsWebhook = Get-AutomationVariable -Name "teams-incoming-webhook"
+    $body = [PSCustomObject][Ordered]@{
+        "summmary"="Alert from Datalake Organizer"
+        "title"="Alert from Datalake Organizer"
+        "text"="<pre>Errors from runbook: $joboutput<br><br>Request body: $body</pre>"
+        }
 
-$teamMessageBody = ConvertTo-Json $body 
-
-Invoke-RestMethod -Uri $teamsWebhook -Method Post -Body $teamMessageBody -ContentType 'application/json'
+    $teamMessageBody = ConvertTo-Json $body 
+    Invoke-RestMethod -Uri $teamsWebhook -Method Post -Body $teamMessageBody -ContentType 'application/json'
+    }else {
+        Write-Output "Blob(s) moved without errors."
+        exit
+    }
 
 
