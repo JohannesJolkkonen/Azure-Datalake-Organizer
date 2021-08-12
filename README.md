@@ -8,7 +8,7 @@ This setup uses BlobTrigger Functions to detect new blobs of data within the Dat
 
 ## Notes
 
--BlobTrigger Functions are triggered retroactively, so when you set the functions to track an existing container/filesystem for uploads, **all existing blobs are also checked** for compliance and moved as necessary.
+- BlobTrigger Functions are triggered retroactively, so when you set the functions to track an existing container/filesystem for uploads, **all existing blobs are also checked** for compliance and moved as necessary.
 
 - Azure Automation was used to move the blobs mostly for learning purposes, but implementing all the scripts with Azure Functions would probably be better due to faster startup. 
 
