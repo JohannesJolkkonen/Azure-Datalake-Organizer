@@ -12,7 +12,7 @@ This setup uses BlobTrigger Functions to detect new blobs of data within the Dat
 
 - Azure Automation was used to move the blobs mostly for learning purposes, but implementing all the scripts with Azure Functions would probably be better due to faster startup. 
 
-- In case of error(s) moving a blob, the runbook sends an alert Message to a Teams-channel using a webhook connector. The webhook address is stored and retrieved with AzAutomate Variables.
+- In case of error(s) moving a blob, the runbook sends an alert Message to a dedicated Teams-channel using a webhook connector. The webhook address is stored and retrieved with AzAutomate Variables.
 
 
 ## Services Used
