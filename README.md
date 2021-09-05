@@ -10,9 +10,13 @@ This setup uses BlobTrigger Functions to detect new blobs of data within the Dat
 
 - BlobTrigger Functions are triggered retroactively, so when you set the functions to track an existing container/filesystem for uploads, **all existing blobs are also checked** for compliance and moved as necessary.
 
-- Azure Automation was used to move the blobs mostly for learning purposes, but implementing all the scripts with Azure Functions would probably be better due to faster startup. 
+- Automation Runbook is called with a webhook address, which the Azure Function retrieves from Key Vault.
 
-- In case of error(s) moving a blob, the runbook sends an alert Message to a dedicated Teams-channel using a webhook connector. The webhook address is stored and retrieved with AzAutomate Variables.
+- Azure Automation was used to move the blobs mostly for learning purposes, but implementing all the scripts with Azure Functions would probably be better due to slightly faster startup. 
+
+- Two Automation Runbooks are used; one for the actual moving of blobs and another one to call its execution. This allows us to retrieve the status of that execution and complete further actions based on it.
+
+- In case of error(s) moving a blob, the error-catching runbook sends an alert Message to a dedicated Teams-channel using a webhook connector. The webhook address is stored and retrieved with AzAutomate Variables.
 
 
 ## Services Used
